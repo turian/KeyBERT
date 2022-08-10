@@ -65,6 +65,7 @@ class KeyBERT:
         vectorizer: CountVectorizer = None,
         highlight: bool = False,
         seed_keywords: List[str] = None,
+        return_embeddings: bool = False,
     ) -> Union[List[Tuple[str, float]], List[List[Tuple[str, float]]]]:
         """Extract keywords and/or keyphrases
 
@@ -158,6 +159,7 @@ class KeyBERT:
 
         # Find keywords
         all_keywords = []
+        all_keyword_embeddings = []
         for index, _ in enumerate(docs):
 
             try:
@@ -203,6 +205,8 @@ class KeyBERT:
                     ][::-1]
 
                 all_keywords.append(keywords)
+                if return_embeddings:
+                    all_keyword_embeddings.append(candidate_embeddings)
 
             # Capturing empty keywords
             except ValueError:
@@ -214,4 +218,7 @@ class KeyBERT:
                 highlight_document(docs[0], all_keywords[0], count)
             all_keywords = all_keywords[0]
 
-        return all_keywords
+        if return_embeddings:
+            return all_keywords, all_keyword_embeddings
+        else:
+            return all_keywords
